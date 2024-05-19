@@ -110,6 +110,26 @@
     </div>
 
     <script>
+        // Carrega os clientes salvos do armazenamento local ao carregar a página
+        window.addEventListener('DOMContentLoaded', function() {
+            var clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            clientes.forEach(function(cliente) {
+                addClienteToList(cliente.nome, cliente.telefone);
+            });
+        });
+
+        // Função para adicionar cliente à lista e ao armazenamento local
+        function addClienteToList(nome, telefone) {
+            var cliente = document.createElement("li");
+            cliente.innerHTML = nome + " - " + telefone + " <button class='delete-btn' onclick='deleteCliente(this)'>Deletar</button>";
+            document.getElementById("cliente-list").appendChild(cliente);
+
+            // Adiciona o cliente ao array de clientes no armazenamento local
+            var clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            clientes.push({ nome: nome, telefone: telefone });
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+        }
+
         // Função para adicionar cliente
         function addCliente() {
             var nome = document.getElementById("nome").value;
@@ -117,9 +137,7 @@
 
             // Verifica se o nome e o telefone estão preenchidos
             if (nome && telefone) {
-                var cliente = document.createElement("li");
-                cliente.innerHTML = nome + " - " + telefone + " <button class='delete-btn' onclick='deleteCliente(this)'>Deletar</button>";
-                document.getElementById("cliente-list").appendChild(cliente);
+                addClienteToList(nome, telefone);
 
                 // Limpa os campos de entrada após adicionar o cliente
                 document.getElementById("nome").value = "";
@@ -127,28 +145,38 @@
             } else {
                 alert("Por favor, preencha todos os campos.");
             }
+
+            // Impede o envio padrão do formulário
+            return false;
         }
 
         // Função para deletar cliente
         function deleteCliente(btn) {
             var listItem = btn.parentNode;
             listItem.parentNode.removeChild(listItem);
-        }
 
-        // Adicione um evento de envio ao formulário para chamar a função addCliente()
-        document.getElementById("cliente-form").addEventListener("submit", function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
-            addCliente(); // Chama a função addCliente() ao enviar o formulário
-        });
+            // Remove o cliente do array de clientes no armazenamento local
+            var clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+            var nomeTelefone = listItem.textContent.split(' - ')[0]; // Obtém o nome do cliente
+            clientes = clientes.filter(function(cliente) {
+                return cliente.nome !== nomeTelefone;
+            });
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+        }
 
         // Adicionar evento de clique ao botão de voltar
         document.getElementById("voltar-btn").addEventListener("click", function() {
             window.location.href = "admin.html"; // Redirecionar para admin.html
         });
-
         // Adicionar evento de clique ao botão de sair
         document.getElementById("sair-btn").addEventListener("click", function() {
-            window.location.href = "index.html"; // Redirecionar para index.html
+            window.location.href = "index.html";
+        });
+
+        // Adicionar evento de clique ao botão de envio do formulário
+        document.getElementById("cliente-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+            addCliente(); // Chama a função addCliente() ao enviar o formulário
         });
     </script>
 </body>
