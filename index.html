@@ -18,6 +18,8 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: #fff;
+        
         }
         .logo {
             display: block;
@@ -33,7 +35,6 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #fff;
         }
         input[type="text"],
         input[type="password"] {
@@ -81,6 +82,8 @@
 
             // Verifica se o nome de usuário e a senha estão corretos
             if (username === "Anthony" && password === "ANTHONY.COM") {
+                // Armazena o estado de login
+                localStorage.setItem('isAuthenticated', 'true');
                 // Redireciona para a página de administração
                 window.location.href = "admin.html";
             } else {

@@ -93,6 +93,11 @@
     </div>
 </body>
 <script>
+    // Verifica se o usuário está autenticado
+    if (localStorage.getItem('isAuthenticated') !== 'true') {
+        window.location.href = "index.html"; // Redireciona para a página de login se não estiver autenticado
+    }
+
     // Defina o nome do usuário aqui
     var nomeUsuario = "Anthony Gabriel Marinho Lima";
     // Atualize o conteúdo do span com o nome do usuário
@@ -100,6 +105,7 @@
 
     // Adicionar evento de clique ao botão "Sair"
     document.getElementById("sair-btn").addEventListener("click", function() {
+        localStorage.removeItem('isAuthenticated'); // Remove o estado de autenticação
         window.location.href = "index.html"; // Redirecionar para index.html
     });
 </script>

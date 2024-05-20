@@ -66,7 +66,7 @@
             padding: 2px 5px;
             cursor: pointer;
         }
-        #voltar-btn{
+        #voltar-btn {
             float: right;
             margin-top: 25px;
             padding: 5px 10px;
@@ -77,7 +77,7 @@
             cursor: pointer;
             margin-left: 10px;
         }
-         #sair-btn{
+        #sair-btn {
             float: right;
             margin-top: 25px;
             padding: 5px 10px;
@@ -87,7 +87,7 @@
             border-radius: 5px;
             cursor: pointer;
             margin-left: 10px;
-         } 
+        }
     </style>
 </head>
 <body>
@@ -95,7 +95,7 @@
         <h1>Clientes</h1>
     </div>
     <div class="container">
-        <form id="cliente-form">
+        <form id="cliente-form" onsubmit="addCliente(); return false;">
             <input type="text" id="nome" placeholder="Nome">
             <input type="text" id="telefone" placeholder="Telefone">
             <input type="submit" value="Adicionar Cliente">
@@ -103,13 +103,17 @@
         <ul id="cliente-list"></ul>
     </div>
     <div class="black-box">
-        <!-- Conteúdo do quadrado preto -->
         <p>Observe, Adicione e Remova</p>
         <button id="voltar-btn">Voltar</button>
         <button id="sair-btn">Sair</button>
     </div>
 
     <script>
+        // Verifica se o usuário está autenticado
+        if (localStorage.getItem('isAuthenticated') !== 'true') {
+            window.location.href = "index.html"; // Redireciona para a página de login se não estiver autenticado
+        }
+
         // Carrega os clientes salvos do armazenamento local ao carregar a página
         window.addEventListener('DOMContentLoaded', function() {
             var clientes = JSON.parse(localStorage.getItem('clientes')) || [];
@@ -145,38 +149,33 @@
             } else {
                 alert("Por favor, preencha todos os campos.");
             }
-
-            // Impede o envio padrão do formulário
-            return false;
         }
 
         // Função para deletar cliente
         function deleteCliente(btn) {
             var listItem = btn.parentNode;
-            listItem.parentNode.removeChild(listItem);
+            var clienteNome = listItem.innerHTML.split(' - ')[0];
 
             // Remove o cliente do array de clientes no armazenamento local
             var clientes = JSON.parse(localStorage.getItem('clientes')) || [];
-            var nomeTelefone = listItem.textContent.split(' - ')[0]; // Obtém o nome do cliente
             clientes = clientes.filter(function(cliente) {
-                return cliente.nome !== nomeTelefone;
+                return cliente.nome !== clienteNome;
             });
             localStorage.setItem('clientes', JSON.stringify(clientes));
+
+            // Remove o cliente da lista visual
+            listItem.parentNode.removeChild(listItem);
         }
 
         // Adicionar evento de clique ao botão de voltar
         document.getElementById("voltar-btn").addEventListener("click", function() {
             window.location.href = "admin.html"; // Redirecionar para admin.html
         });
+
         // Adicionar evento de clique ao botão de sair
         document.getElementById("sair-btn").addEventListener("click", function() {
-            window.location.href = "index.html";
-        });
-
-        // Adicionar evento de clique ao botão de envio do formulário
-        document.getElementById("cliente-form").addEventListener("submit", function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
-            addCliente(); // Chama a função addCliente() ao enviar o formulário
+            localStorage.removeItem('isAuthenticated'); // Remove o estado de autenticação
+            window.location.href = "index.html"; // Redirecionar para index.html
         });
     </script>
 </body>
